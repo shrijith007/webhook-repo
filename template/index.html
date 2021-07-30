@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Webhook task</title>
+    <script>
+    // Hitting the fetch route every 15 seconds for the updated data
+    var newdata = [];
+      setInterval(() => {
+        fetch("http://127.0.0.1:5000/fetchy").then((response) => {
+          response.json().then((data) => {
+            newdata = data.d;
+            document.getElementById("Pull").innerHTML = ""
+            document.getElementById("Push").innerHTML = ""
+            document.getElementById("Merge").innerHTML = ""
+            // checking for the action of data recieved
+            for (key in newdata) {
+            if (newdata[key]["action"] == "PULL") {
+                document.getElementById("Pull").innerHTML += '<li>'+
+                newdata[key]["author"] +
+                " submitted a pull request from " +
+                newdata[key]["from_branch"] +
+                " to " +
+                newdata[key]["to_branch"] +
+                " on " +
+                newdata[key]["timestamp"]; + "</li>" + "\n"
+            }
+            else if(newdata[key]["action"] == "PUSH"){
+                document.getElementById("Push").innerHTML +='<li>'+
+                newdata[key]["author"] +
+                " pushed " +
+                " to " +
+                newdata[key]["to_branch"] +
+                " on " +
+                newdata[key]["timestamp"]; + "</li>" + "\n"
+            }
+            else if (newdata[key]["action"] == "MERGE") {
+                document.getElementById("Merge").innerHTML += '<li>'+
+                newdata[key]["author"] +
+                " merged branch " +
+                newdata[key]["from_branch"] +
+                " to " +
+                newdata[key]["to_branch"] +
+                " on " +
+                newdata[key]["timestamp"]; + "</li>" + "\n"
+            }
+
+            }
+          });
+        });
+        
+      }, 15000);
+    </script>
+
+    <style>
+        h1{font-size: 30px;text-align:center;padding: 50px;}
+        li{list-style: none;font-size: 20px;}
+        section{align-items: center;align-content: center;text-align: center;}
+
+    </style>
+  </head>
+  <body>
+    <ol>
+      <h1>Pull Requests</h1>
+
+        <section id="Pull">
+            {%for i in range(0, len)%} {% if data[i]["action"] =="PULL" %}
+            <li>
+              {{data[i]["author"]}} submitted a pull request from {{data[i]["from_branch"]}} to {{data[i]["to_branch"]}} on
+              {{data[i]["timestamp"]}}
+            </li>
+            {% endif %} {%endfor%}
+        </section>
+
+<h1>Pushes</h1>
+
+<section id="Push">
+{%for i in range(0, len)%} {% if data[i]["action"] =="PUSH" %}
+        <li>
+          {{data[i]["author"]}} pushed to {{data[i]["to_branch"]}} on
+          {{data[i]["timestamp"]}}
+        </li>
+        {% endif %} {%endfor%}
+      </section>
+
+<h1>Merges</h1>
+<section id="Merge">
+        {%for i in range(0, len)%} {% if data[i]["action"] =="MERGE" %}
+                <li>
+                  {{data[i]["author"]}} merged branch {{data[i]["from_branch"]}} to {{data[i]["to_branch"]}} on
+                  {{data[i]["timestamp"]}}
+                </li>
+                {% endif %} {%endfor%}
+              </section>
+    </ol>
+  </body>
+</html>
