@@ -1,0 +1,4 @@
+dnspython==1.16.0
+Flask @ file:///home/ktietz/src/ci/flask_1611932660458/work
+Jinja2 @ file:///tmp/build/80754af9/jinja2_1612213139570/work
+pymongo==3.9.0
